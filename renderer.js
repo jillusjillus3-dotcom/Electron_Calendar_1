@@ -17,6 +17,45 @@ function updateCalendar() {
     document.getElementById("date").textContent = date;
     document.getElementById("month").textContent = month.toUpperCase();
     document.getElementById("year").textContent = year;
+
+    let dragging = false;
+
+document.addEventListener("mousedown", (event) => {
+
+    if (event.button !== 0) {
+        return;
+    }
+
+    dragging = true;
+
+    window.electronAPI.startDrag(
+        event.screenX,
+        event.screenY
+    );
+});
+
+document.addEventListener("mousemove", (event) => {
+
+    if (!dragging) {
+        return;
+    }
+
+    window.electronAPI.drag(
+        event.screenX,
+        event.screenY
+    );
+});
+
+document.addEventListener("mouseup", (event) => {
+
+    if (event.button !== 0) {
+        return;
+    }
+
+    dragging = false;
+
+    window.electronAPI.stopDrag();
+});
 }
 
 updateCalendar();
