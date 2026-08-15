@@ -1,0 +1,107 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Handjet:wght,ELSH@100..900,2&display=swap');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 154px;
+    height: 182px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.calendar {
+    width: 154px;
+    height: 182px;
+
+    background-color: #f5f1e8;
+
+    border-radius: 9px;
+
+    overflow: hidden;
+
+    -webkit-app-region: drag;
+}
+
+header {
+    height: 29px;
+
+    background-color: #111111;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#calendar-title {
+    color: white;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+    font-family: "Doto", sans-serif;
+}
+
+main {
+    height: calc(100% - 26px);
+
+    padding: 12px 11px 9px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#day,
+#year {
+    font-size: 15px;
+    font-weight: bold;
+
+    font-family:"Handjet", sans-serif;
+}
+
+.date {
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+#date {
+    font-size: 65px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+#month {
+    text-align: center;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    font-family:"Handjet", sans-serif;
+}
