@@ -4,7 +4,10 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    "build:css": "tailwindcss -i ./style.css -o ./tailwind.css --minify",
+    "prestart": "npm run build:css",
     "start": "electron .",
+    "prebuild": "npm run build:css",
     "build": "electron-builder"
   },
   "keywords": [],
@@ -12,8 +15,10 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "electron": "^43.4.0",
-    "electron-builder": "^26.15.3"
+    "electron-builder": "^26.15.3",
+    "tailwindcss": "^4.3.3"
   },
   "dependencies": {
     "koffi": "^3.1.5"
