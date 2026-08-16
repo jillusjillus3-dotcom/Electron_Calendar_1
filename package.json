@@ -4,16 +4,41 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "electron": "^43.4.0"
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3"
   },
   "dependencies": {
     "koffi": "^3.1.5"
+  },
+  "build": {
+    "appId": "com.electroncalendar.desktop",
+    "productName": "Desktop Calendar",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist{,/**/*}"
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }

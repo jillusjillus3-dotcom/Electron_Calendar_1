@@ -1,0 +1,4 @@
+FindWindowA Progman: 0
+FindWindowW Progman: 0
+GetShellWindow: 0
+GetDesktopWindow: 395088
