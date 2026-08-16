@@ -8,6 +8,120 @@ const {
 
 const fs = require("fs");
 const path = require("path");
+const koffi = require("koffi");
+
+
+// ============================================
+// CONFIGURE WINDOW AS DESKTOP-ONLY WIDGET
+// ============================================
+
+let isPinnedToWallpaper = true;
+let desktopInterval = null;
+
+function makeDesktopWidget(window, pinToWallpaper = true) {
+    if (process.platform !== "win32") {
+        return;
+    }
+
+    try {
+        const user32 = koffi.load("user32.dll");
+
+        const FindWindowA = user32.func("uintptr_t FindWindowA(str className, uintptr_t windowName)");
+        const GetDesktopWindow = user32.func("uintptr_t GetDesktopWindow()");
+        const GetWindowLongPtrA = user32.func("intptr_t GetWindowLongPtrA(uintptr_t hWnd, int nIndex)");
+        const SetWindowLongPtrA = user32.func("intptr_t SetWindowLongPtrA(uintptr_t hWnd, int nIndex, intptr_t dwNewLong)");
+        const SetWindowPos = user32.func("bool SetWindowPos(uintptr_t hWnd, uintptr_t hWndInsertAfter, int X, int Y, int cx, int cy, uint32_t uFlags)");
+
+        const rawHandle = window.getNativeWindowHandle();
+        const hwnd = process.arch === "x64" ? rawHandle.readBigUInt64LE(0) : rawHandle.readUInt32LE(0);
+
+        const progman = FindWindowA("Progman", 0);
+        const desktopOwner = progman || GetDesktopWindow();
+
+        const GWL_EXSTYLE = -20;
+        const GWLP_HWNDPARENT = -8;
+        const WS_EX_NOACTIVATE = 0x08000000;
+        const WS_EX_TOOLWINDOW = 0x00000080;
+
+        const HWND_BOTTOM = 1;
+        const HWND_NOTOPMOST = -2;
+        const SWP_NOSIZE = 0x0001;
+        const SWP_NOMOVE = 0x0002;
+        const SWP_NOACTIVATE = 0x0010;
+        const SWP_SHOWWINDOW = 0x0040;
+
+        if (pinToWallpaper) {
+            // Set desktop window as owner so Windows Shell ignores it during Win+D (Show Desktop)
+            if (desktopOwner) {
+                SetWindowLongPtrA(hwnd, GWLP_HWNDPARENT, desktopOwner);
+            }
+
+            // Apply WS_EX_NOACTIVATE & WS_EX_TOOLWINDOW styles
+            const currentExStyle = GetWindowLongPtrA(hwnd, GWL_EXSTYLE);
+            SetWindowLongPtrA(hwnd, GWL_EXSTYLE, currentExStyle | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
+
+            const sendToBottom = () => {
+                if (!window.isDestroyed() && isPinnedToWallpaper) {
+                    SetWindowPos(hwnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                }
+            };
+
+            const ensureVisibleOnBottom = () => {
+                if (window.isDestroyed() || !isPinnedToWallpaper) return;
+                if (window.isMinimized()) {
+                    window.restore();
+                }
+                if (!window.isVisible()) {
+                    window.show();
+                }
+                sendToBottom();
+            };
+
+            sendToBottom();
+
+            if (!window._desktopWidgetRegistered) {
+                window._desktopWidgetRegistered = true;
+
+                window.on("focus", sendToBottom);
+                window.on("show", sendToBottom);
+                window.on("move", sendToBottom);
+
+                // Prevent window from minimizing/hiding during Win+D (Show Desktop)
+                window.on("minimize", (event) => {
+                    event.preventDefault();
+                    ensureVisibleOnBottom();
+                    setTimeout(ensureVisibleOnBottom, 50);
+                    setTimeout(ensureVisibleOnBottom, 150);
+                });
+
+                window.on("hide", () => {
+                    ensureVisibleOnBottom();
+                    setTimeout(ensureVisibleOnBottom, 50);
+                    setTimeout(ensureVisibleOnBottom, 150);
+                });
+
+                window.on("blur", () => {
+                    setTimeout(sendToBottom, 50);
+                });
+            }
+
+            // Periodically ensure widget stays at desktop bottom z-order
+            if (!desktopInterval) {
+                desktopInterval = setInterval(sendToBottom, 1000);
+            }
+        } else {
+            // Unpin from wallpaper: remove owner and restore normal window level
+            SetWindowLongPtrA(hwnd, GWLP_HWNDPARENT, 0);
+            SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
+            if (desktopInterval) {
+                clearInterval(desktopInterval);
+                desktopInterval = null;
+            }
+        }
+    } catch (error) {
+        console.log("Could not configure desktop widget window styles:", error);
+    }
+}
 
 
 // ============================================
@@ -98,15 +212,16 @@ function createWindow() {
 
         transparent: true,
 
-        webPreferences: {
+        skipTaskbar: true,
 
+        minimizable: false,
+
+        webPreferences: {
             preload: path.join(
                 __dirname,
                 "preload.js"
             ),
-
             contextIsolation: true,
-
             nodeIntegration: false
         },
 
@@ -124,6 +239,8 @@ function createWindow() {
 
     window.loadFile("index.html");
 
+    makeDesktopWidget(window, isPinnedToWallpaper);
+
 
     // ============================================
     // RIGHT CLICK MENU
@@ -137,15 +254,35 @@ function createWindow() {
 
             const contextMenu =
                 Menu.buildFromTemplate([
-
+                    {
+                        label: "Stick to Wallpaper",
+                        type: "checkbox",
+                        checked: isPinnedToWallpaper,
+                        click: (menuItem) => {
+                            isPinnedToWallpaper = menuItem.checked;
+                            makeDesktopWidget(window, isPinnedToWallpaper);
+                        }
+                    },
+                    {
+                        type: "separator"
+                    },
+                    {
+                        label: "Reset Position",
+                        click: () => {
+                            const defaultPos = getSafePosition(20, 20);
+                            window.setPosition(defaultPos.x, defaultPos.y);
+                            savePosition(defaultPos.x, defaultPos.y);
+                        }
+                    },
+                    {
+                        type: "separator"
+                    },
                     {
                         label: "Close",
-
                         click: () => {
                             window.close();
                         }
                     }
-
                 ]);
 
             contextMenu.popup();
@@ -585,6 +722,9 @@ function createWindow() {
 // ============================================
 // START ELECTRON
 // ============================================
+
+app.commandLine.appendSwitch("disable-gpu-shader-disk-cache");
+app.commandLine.appendSwitch("disable-http-cache");
 
 app.whenReady().then(() => {
 
