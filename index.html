@@ -14,92 +14,96 @@
 
     <div
         id="calendar"
-        class="flip-calendar relative h-[182px] w-[154px] select-none overflow-hidden rounded-[22px] border-[3px] border-black bg-[#eae6d9] text-[#111111] shadow-[0_6px_14px_rgba(0,0,0,0.35)] [-webkit-app-region:no-drag] [touch-action:none]"
+        class="flip-calendar relative h-[182px] w-[154px] select-none overflow-hidden bg-white text-[#111111] shadow-[0_6px_14px_rgba(0,0,0,0.35)] [-webkit-app-region:no-drag] [touch-action:none]"
     >
 
         <section
             id="active-face"
-            class="absolute inset-0 z-0 flex h-full w-full flex-col overflow-hidden rounded-[19px] bg-[#eae6d9] text-[#111111]"
+            class="absolute inset-0 z-0 flex h-full w-full flex-col overflow-hidden bg-white text-[#111111]"
         >
-            <header class="flex h-[34px] shrink-0 items-center justify-center bg-black">
+            <header class="flex h-[34px] shrink-0 items-center justify-center bg-[#d00027]">
                 <p id="calendar-title" class="font-doto text-[13px] font-bold tracking-[1px] text-white">Calendar</p>
             </header>
 
-            <main class="flex h-[142px] flex-col px-[12px] pb-[8px] pt-[8px]">
-                <div class="flex items-center justify-between">
+            <main class="flex h-[148px] flex-col px-[12px] pb-[8px] pt-[8px]">
+                <div id="top-metadata-row" class="flex items-center justify-between">
                     <p id="day" data-calendar-field="day" class="font-handjet text-[15px] font-bold leading-none text-black"></p>
                     <p id="year" data-calendar-field="year" class="font-handjet text-[15px] font-bold leading-none text-black"></p>
                 </div>
 
-                <div class="flex min-h-0 flex-1 items-center justify-center">
+                <div id="date-row" class="flex min-h-0 flex-1 items-center justify-center">
                     <p id="date" data-calendar-field="date" class="font-display text-[64px] font-bold leading-none text-black"></p>
                 </div>
 
-                <p id="month" data-calendar-field="month" class="text-center font-handjet text-[18px] font-bold leading-none tracking-[1px] text-black"></p>
+                <div id="bottom-metadata-row" class="flex items-center justify-center">
+                    <p id="month" data-calendar-field="month" class="text-center font-handjet text-[18px] font-bold leading-none tracking-[1px] text-black"></p>
+                </div>
             </main>
         </section>
 
-        <!-- Fixed Top Header Overlay with Smooth Rounded Top Corners -->
-        <header class="pointer-events-none absolute left-0 top-0 z-35 flex h-[34px] w-full shrink-0 items-center justify-center rounded-t-[19px] bg-black">
+        <!-- Fixed Top Header Overlay -->
+        <header class="pointer-events-none absolute left-0 top-0 z-35 flex h-[34px] w-full shrink-0 items-center justify-center bg-[#d00027]">
             <p class="font-doto text-[13px] font-bold tracking-[1px] text-white">Calendar</p>
         </header>
 
-        <div id="incoming-top" class="flap-half absolute left-0 top-[34px] z-10 hidden h-[71px] w-full overflow-hidden pointer-events-none">
-            <div id="incoming-top-face" class="flap-face absolute left-0 -top-[34px] h-[176px] w-full"></div>
+        <div id="incoming-top" class="flap-half absolute left-0 top-[34px] z-10 hidden h-[74px] w-full overflow-hidden pointer-events-none">
+            <div id="incoming-top-face" class="flap-face absolute left-0 -top-[34px] h-[182px] w-full overflow-hidden"></div>
         </div>
 
-        <div id="incoming-bottom" class="flap-half absolute left-0 top-[105px] z-10 hidden h-[71px] w-full overflow-hidden pointer-events-none">
-            <div id="incoming-bottom-face" class="flap-face absolute left-0 -top-[105px] h-[176px] w-full"></div>
+        <div id="incoming-bottom" class="flap-half absolute left-0 top-[108px] z-10 hidden h-[74px] w-full overflow-hidden pointer-events-none">
+            <div id="incoming-bottom-face" class="flap-face absolute left-0 -top-[108px] h-[182px] w-full overflow-hidden"></div>
         </div>
 
-        <div id="outgoing-top" class="flap-half flap-outgoing absolute left-0 top-[34px] z-20 hidden h-[71px] w-full origin-bottom overflow-hidden pointer-events-none">
-            <div id="outgoing-top-face" class="flap-face absolute left-0 -top-[34px] h-[176px] w-full"></div>
+        <div id="outgoing-top" class="flap-half flap-outgoing absolute left-0 top-[34px] z-20 hidden h-[74px] w-full origin-bottom overflow-hidden pointer-events-none">
+            <div id="outgoing-top-face" class="flap-face absolute left-0 -top-[34px] h-[182px] w-full overflow-hidden"></div>
         </div>
 
-        <div id="outgoing-bottom" class="flap-half flap-outgoing absolute left-0 top-[105px] z-20 hidden h-[71px] w-full origin-top overflow-hidden pointer-events-none">
-            <div id="outgoing-bottom-face" class="flap-face absolute left-0 -top-[105px] h-[176px] w-full"></div>
+        <div id="outgoing-bottom" class="flap-half flap-outgoing absolute left-0 top-[108px] z-20 hidden h-[74px] w-full origin-top overflow-hidden pointer-events-none">
+            <div id="outgoing-bottom-face" class="flap-face absolute left-0 -top-[108px] h-[182px] w-full overflow-hidden"></div>
         </div>
 
-        <!-- Center Split Seam Line -->
-        <div class="pointer-events-none absolute left-0 top-[105px] z-30 h-px w-full -translate-y-1/2 bg-black/80"></div>
+        <!-- Center Split Seam Line with Visible Slit Cut Through Numbers -->
+        <div class="pointer-events-none absolute left-0 top-[108px] z-30 h-px w-full -translate-y-1/2 bg-black/60 shadow-[0_1px_0_rgba(255,255,255,0.95)]"></div>
 
-        <!-- Black Hinge Clips on Left and Right Edges -->
-        <span class="pointer-events-none absolute left-0 top-[105px] z-30 h-[14px] w-[5px] -translate-y-1/2 rounded-r-xs bg-black"></span>
-        <span class="pointer-events-none absolute right-0 top-[105px] z-30 h-[14px] w-[5px] -translate-y-1/2 rounded-l-xs bg-black"></span>
+        <!-- Stainless Steel Metallic Hinge Clips on Left and Right Edges -->
+        <span class="pointer-events-none absolute left-0 top-[108px] z-30 h-[14px] w-[5px] -translate-y-1/2 rounded-r-xs bg-gradient-to-b from-[#f3f4f6] via-[#9ca3af] to-[#4b5563] border-y border-r border-black/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_1px_2px_rgba(0,0,0,0.25)]"></span>
+        <span class="pointer-events-none absolute right-0 top-[108px] z-30 h-[14px] w-[5px] -translate-y-1/2 rounded-l-xs bg-gradient-to-b from-[#f3f4f6] via-[#9ca3af] to-[#4b5563] border-y border-l border-black/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_1px_2px_rgba(0,0,0,0.25)]"></span>
 
         <button
             type="button"
             aria-label="Previous day"
             data-flip-zone="previous"
-            class="absolute left-0 top-[34px] z-40 h-[71px] w-full cursor-pointer appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/25 [-webkit-app-region:no-drag] [touch-action:none]"
+            class="absolute left-0 top-[34px] z-40 h-[74px] w-full cursor-pointer appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/25 [-webkit-app-region:no-drag] [touch-action:none]"
         ></button>
 
         <button
             type="button"
             aria-label="Next day"
             data-flip-zone="next"
-            class="absolute left-0 top-[105px] z-40 h-[71px] w-full cursor-pointer appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/25 [-webkit-app-region:no-drag] [touch-action:none]"
+            class="absolute left-0 top-[108px] z-40 h-[74px] w-full cursor-pointer appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/25 [-webkit-app-region:no-drag] [touch-action:none]"
         ></button>
 
     </div>
 
     <template id="calendar-face-template">
-        <section class="flex h-[176px] w-full flex-col overflow-hidden bg-[#eae6d9] text-[#111111]">
-            <header class="flex h-[34px] shrink-0 items-center justify-center bg-black">
+        <section class="flex h-[182px] w-full flex-col overflow-hidden bg-white text-[#111111]">
+            <header class="flex h-[34px] shrink-0 items-center justify-center bg-[#d00027]">
                 <p class="font-doto text-[13px] font-bold tracking-[1px] text-white">Calendar</p>
             </header>
 
-            <main class="flex h-[142px] flex-col px-[12px] pb-[8px] pt-[8px]">
-                <div class="flex items-center justify-between">
+            <main class="flex h-[148px] flex-col px-[12px] pb-[8px] pt-[8px]">
+                <div class="top-metadata-row flex items-center justify-between">
                     <p data-calendar-field="day" class="font-handjet text-[15px] font-bold leading-none text-black"></p>
                     <p data-calendar-field="year" class="font-handjet text-[15px] font-bold leading-none text-black"></p>
                 </div>
 
-                <div class="flex min-h-0 flex-1 items-center justify-center">
+                <div class="date-row flex min-h-0 flex-1 items-center justify-center">
                     <p data-calendar-field="date" class="font-display text-[64px] font-bold leading-none text-black"></p>
                 </div>
 
-                <p data-calendar-field="month" class="text-center font-handjet text-[18px] font-bold leading-none tracking-[1px] text-black"></p>
+                <div class="bottom-metadata-row flex items-center justify-center">
+                    <p data-calendar-field="month" class="text-center font-handjet text-[18px] font-bold leading-none tracking-[1px] text-black"></p>
+                </div>
             </main>
         </section>
     </template>

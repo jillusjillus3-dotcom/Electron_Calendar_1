@@ -54,11 +54,11 @@
 @utility flap-half {
     backface-visibility: hidden;
     transform-style: preserve-3d;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 @utility flap-face {
     backface-visibility: hidden;
-    transform-style: preserve-3d;
     transform: translateZ(0.1px);
 }
 
